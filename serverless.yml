@@ -1,0 +1,30 @@
+service: pdf
+
+plugins:
+  - serverless-offline
+
+custom:
+  serverless-offline:
+    port: 4000
+
+package:
+  exclude:
+    - ./**
+  include:
+    - node_modules/**
+    - handler.js
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  stage: dev
+  region: 'eu-central-1'
+
+functions:
+  service:
+    handler: handler.handler
+    events:
+      - http:
+          path: /{proxy+}
+          method: POST
+          cors: true
