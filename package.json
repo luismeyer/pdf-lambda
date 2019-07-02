@@ -4,7 +4,8 @@
   "description": "Pdf Generator Lambda for Html File",
   "main": "index.js",
   "scripts": {
-    "start": "sls offline"
+    "start": "sls offline",
+    "deploy": "sls deploy"
   },
   "author": "",
   "license": "ISC",
