@@ -1,5 +1,6 @@
 "use strict";
 const chromium = require("chrome-aws-lambda");
+const chromepath = process.env.IS_OFFLINE && process.env.CHROME_PATH;
 
 const btoa = (b) => Buffer.from(b, 'base64').toString();
 const CorsHeaders = {
@@ -29,13 +30,12 @@ module.exports.handler = async (event) => {
   const encodedHtml = body.html
 
   const html = btoa(encodedHtml);
-  console.log(html);
   
   const browser = await chromium.puppeteer.launch({
     args: chromium.args,
     defaultViewport: chromium.defaultViewport,
-    executablePath: await chromium.executablePath,
-    headless: chromium.headless,
+    executablePath: chromepath ? chromepath : await chromium.executablePath,
+    headless: true,
   });
 
   try {

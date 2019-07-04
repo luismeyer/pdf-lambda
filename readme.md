@@ -17,6 +17,7 @@ The function will return a json containing the pdf as a buffer and the filename 
 ## Command
 
 Start local Development:
+(If you aren't on Mac or if you don't have Chrome installed in the default Mac directory put your Chromepath into the serverless.yml file)
 ```bash
 npm start
 ```
