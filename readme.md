@@ -14,7 +14,7 @@ Send a Post Request to the Lambda using a body like this:
 
 The function will return a json containing the pdf as a buffer and the filename for further usage of the file.
 
-## Command
+## Commands
 
 Start local Development:
 (If you aren't on Mac or if you don't have Chrome installed in the default Mac directory put your Chromepath into the serverless.yml file)
@@ -25,6 +25,11 @@ npm start
 Deploy the Function to your AWS Account:
 ```bash
 npm run deploy
+```
+
+Client Example:
+```bash
+npm run client
 ```
 
 ## License
