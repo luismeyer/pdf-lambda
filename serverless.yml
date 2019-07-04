@@ -19,12 +19,14 @@ provider:
   runtime: nodejs8.10
   stage: dev
   region: 'eu-central-1'
+  environment:
+      CHROME_PATH: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
 
 functions:
   service:
     handler: handler.handler
     events:
       - http:
-          path: /{proxy+}
+          path: /pdf
           method: POST
           cors: true

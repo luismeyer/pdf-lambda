@@ -4,8 +4,10 @@
   "description": "Pdf Generator Lambda for Html File",
   "main": "index.js",
   "scripts": {
-    "start": "sls offline",
-    "deploy": "sls deploy"
+    "start": "sls offline start",
+    "deploy": "sls deploy",
+    "deploy:function": "sls deploy function -f service",
+    "client": "node ./test-client/index.js"
   },
   "author": "",
   "license": "ISC",
@@ -13,8 +15,9 @@
     "chrome-aws-lambda": "^1.17.1",
     "i": "^0.3.6",
     "npm": "^6.9.0",
-    "puppeteer-core": "^1.17.0",
-    "serverless-offline": "^4.10.6"
+    "puppeteer-core": "^1.17.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "serverless-offline": "^4.10.6"
+  }
 }
