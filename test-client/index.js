@@ -1,20 +1,30 @@
 const fetch = require('node-fetch');
 const fs = require('fs');
+const path = require('path');
+require('dotenv').config();
 
-var html = fs.readFileSync('./test-client/test.html');
+const { LAMBDA_ENDPOINT } = process.env;
+if (!LAMBDA_ENDPOINT)
+  throw Error('Missing Environment Variable "LAMBDA_ENDPOINT"');
+
+const html = fs.readFileSync(path.join(__dirname, 'test.html'));
 const buffer = Buffer.from(html).toString('base64');
 console.info('Sending Htmlfile to Lambda Endpoint...');
-fetch('http://localhost:4000/pdf', {
+
+fetch(LAMBDA_ENDPOINT, {
   method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
     html: buffer,
-    filename: "test.pdf"
+    filename: 'test.pdf'
   })
 })
-.then( (response) => response.json())
-.then( (response) => {
-  console.info('Saving Pdf File...')
-  var wstream = fs.createWriteStream(`./test-client/${response.filename}`);
-  wstream.write(new Buffer(response.pdf));
-  wstream.end();
-});
+  .then(response => response.json())
+  .then(response => {
+    console.info('Saving Pdf File...');
+    const wstream = fs.createWriteStream(
+      path.join(__dirname, response.filename)
+    );
+    wstream.write(Buffer.from(response.pdf));
+    wstream.end();
+  });
