@@ -1,6 +1,6 @@
 # Pdf Lambda
 
-The source code for an AWS Lambda that converts Html to Pdf
+AWS Lambda that converts Html to Pdf
 
 ## Usage
 
@@ -38,7 +38,4 @@ npm run client
 
 ## License
 
-# <<<<<<< HEAD
-
-> > > > > > > feat/local-chrome-revision
-> > > > > > > [MIT](https://choosealicense.com/licenses/mit/)
+[MIT](https://choosealicense.com/licenses/mit/)
