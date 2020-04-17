@@ -22,9 +22,9 @@ fetch(LAMBDA_ENDPOINT, {
   .then((response) => response.json())
   .then((response) => {
     console.info("Saving Pdf File...");
-    const wstream = fs.createWriteStream(
-      path.join(__dirname, response.filename)
+
+    fs.writeFileSync(
+      path.join(__dirname, response.filename),
+      Buffer.from(response.pdf)
     );
-    wstream.write(Buffer.from(response.pdf));
-    wstream.end();
   });

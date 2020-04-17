@@ -1,6 +1,7 @@
 "use strict";
-const chromium = require("chrome-aws-lambda");
-const chromepath = process.env.IS_OFFLINE && process.env.CHROME_PATH;
+const launchChrome = require("@serverless-chrome/lambda");
+const request = require("superagent");
+const puppeteer = require("puppeteer");
 
 const btoa = (b) => Buffer.from(b, "base64").toString();
 const CorsHeaders = {
@@ -8,32 +9,25 @@ const CorsHeaders = {
   "Access-Control-Allow-Credentials": true,
 };
 
-const errorResponse = {
-  statusCode: 404,
-  headers: CorsHeaders,
-  body: JSON.stringify({
-    message: "Error while rendering pdf",
-  }),
-};
+const getChrome = async () => {
+  const chrome = await launchChrome({
+    flags: ["--headless"],
+  });
 
-const successResponse = (pdf, filename) => ({
-  statusCode: 200,
-  headers: CorsHeaders,
-  body: JSON.stringify({
-    pdf,
-    filename,
-  }),
-});
+  const response = await request
+    .get(`${chrome.url}/json/version`)
+    .set("Content-Type", "application/json");
+
+  return response.body.webSocketDebuggerUrl;
+};
 
 module.exports.handler = async (event) => {
   const body = JSON.parse(event.body);
   const html = btoa(body.html);
 
-  const browser = await chromium.puppeteer.launch({
-    args: chromium.args,
-    defaultViewport: chromium.defaultViewport,
-    executablePath: chromepath ? chromepath : await chromium.executablePath,
-    headless: true,
+  const endpoint = await getChrome();
+  const browser = await puppeteer.connect({
+    browserWSEndpoint: endpoint,
   });
 
   try {
@@ -48,10 +42,23 @@ module.exports.handler = async (event) => {
     console.info("Cleanup...");
     await browser.close();
 
-    return successResponse(buffer, body.filename);
+    return {
+      statusCode: 200,
+      headers: CorsHeaders,
+      body: JSON.stringify({
+        pdf: buffer,
+        filename: body.filename,
+      }),
+    };
   } catch (e) {
     console.error("Error while rendering PDF: ", e);
     await browser.close();
-    return errorResponse;
+    return {
+      statusCode: 404,
+      headers: CorsHeaders,
+      body: JSON.stringify({
+        message: "Error while rendering pdf",
+      }),
+    };
   }
 };

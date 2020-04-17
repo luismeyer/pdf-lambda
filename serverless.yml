@@ -2,6 +2,7 @@ service: pdf
 
 plugins:
   - serverless-offline
+  - serverless-dotenv-plugin
 
 custom:
   serverless-offline:
@@ -18,9 +19,7 @@ provider:
   name: aws
   runtime: nodejs8.10
   stage: dev
-  region: 'eu-central-1'
-  environment:
-      CHROME_PATH: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+  region: "eu-central-1"
 
 functions:
   service:
