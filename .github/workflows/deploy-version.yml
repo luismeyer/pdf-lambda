@@ -13,10 +13,8 @@ jobs:
     steps:
       - uses: actions/checkout@master
 
-      - name: npm install
-        uses: actions/npm@master
-        with:
-          args: install
+      - name: Install
+        run: npm install --only=prod
 
       - name: serverless deploy
         uses: serverless/github-action@master
