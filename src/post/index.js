@@ -4,7 +4,6 @@ const atob = require("atob");
 
 const chromePath = process.env.CHROME_PATH;
 
-const btoa = (b) => Buffer.from(b, "base64").toString();
 const DEFAULT_HEADERS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Credentials": true,
@@ -13,6 +12,7 @@ const DEFAULT_HEADERS = {
 module.exports = async (event, _, callback) => {
   const body = JSON.parse(event.body);
   console.log(body.html);
+
   const html = atob(body.html);
   console.log(html);
 
@@ -26,7 +26,7 @@ module.exports = async (event, _, callback) => {
   try {
     console.info("Opening HTML File...");
     const page = await browser.newPage();
-    await page.goto("data:text/html," + html, { waitUntil: "networkidle2" });
+    await page.goto(`data:text/html,${html}`, { waitUntil: "networkidle2" });
     await page.waitFor("*");
 
     console.info("Printing PDF...");

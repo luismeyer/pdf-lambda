@@ -7,7 +7,7 @@
     "start": "sls offline start",
     "deploy": "sls deploy",
     "deploy:function": "sls deploy function -f service",
-    "client": "node src/client/index.js"
+    "client": "node src/scripts/client/index.js"
   },
   "author": "",
   "license": "ISC",
