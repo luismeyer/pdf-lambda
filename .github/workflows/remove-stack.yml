@@ -1,0 +1,24 @@
+name: Remove PR to dev stage
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  client:
+    if: github.event.comment.body == '@github-actions remove'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@master
+
+      - name: Install
+        run: npm install
+
+      - name: Serverless deploy
+        uses: serverless/github-action@master
+        with:
+          args: remove --stage dev
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

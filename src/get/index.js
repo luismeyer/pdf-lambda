@@ -21,14 +21,13 @@ module.exports = (event, _, callback) => {
                 html: btoa(evt.target.result),
               }),
             })
-              .then(response => response.arrayBuffer())
+              .then(response => response.json())
               .then(response => {
                 const a = document.getElementById("download-anchor");
-                const blob = new Blob([response], {type: "application/json"});
-                a.href = window.URL.createObjectURL(blob);
+                a.href = \`data:application/pdf;base64,\${response.data}\`;
                 a.download = "test.pdf";
                 a.click();
-                this.value = '';
+                this.value = "";
               });
           };
 

@@ -2,6 +2,8 @@ const fetch = require("node-fetch");
 const fs = require("fs");
 const path = require("path");
 const btoa = require("btoa");
+const atob = require("atob");
+
 require("dotenv").config();
 
 const { LAMBDA_ENDPOINT } = process.env;
@@ -24,10 +26,9 @@ fetch(LAMBDA_ENDPOINT, {
     html: btoa(html),
   }),
 })
-  .catch((err) => console.error("Error while fetching lambda:", err))
-  .then((response) => response.buffer())
-  .then((response) => {
-    console.info("Saving Pdf File...");
-    fs.writeFileSync(path.join(process.cwd(), "test.pdf"), response);
-  })
-  .catch((err) => console.error("Error while saving pdf file:", err));
+  .then((res) => res.json())
+  .then((res) => {
+    console.log("Saving PDf");
+    console.log(atob(res.data));
+    fs.writeFileSync("test.pdf", atob(res.data));
+  });

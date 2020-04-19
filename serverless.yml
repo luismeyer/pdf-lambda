@@ -17,8 +17,7 @@ package:
   exclude:
     - ./**
   include:
-    - node_modules/**
-    - handler.js
+    - .webpack
 
 provider:
   name: aws
@@ -27,6 +26,11 @@ provider:
   region: "eu-central-1"
   environment:
     STAGE: ${self:provider.stage}
+  apiGateway:
+    binaryMediaTypes:
+      - "*/*"
+  logs:
+    restApi: true
 
 functions:
   post:
