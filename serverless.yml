@@ -25,12 +25,21 @@ provider:
   runtime: nodejs12.x
   stage: dev
   region: "eu-central-1"
+  environment:
+    STAGE: ${self:provider.stage}
 
 functions:
-  service:
-    handler: index.handler
+  post:
+    handler: src/handlers.post
     events:
       - http:
           path: /pdf
           method: POST
+          cors: true
+  get:
+    handler: src/handlers.get
+    events:
+      - http:
+          path: /pdf
+          method: GET
           cors: true

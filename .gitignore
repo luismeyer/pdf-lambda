@@ -4,4 +4,4 @@ node_modules/
 .webpack
 
 # Test Client Files
-test.*
+test.pdf

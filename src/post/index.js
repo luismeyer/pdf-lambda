@@ -1,17 +1,20 @@
 "use strict";
 const chromium = require("chrome-aws-lambda");
+const atob = require("atob");
 
 const chromePath = process.env.CHROME_PATH;
 
 const btoa = (b) => Buffer.from(b, "base64").toString();
-const CorsHeaders = {
+const DEFAULT_HEADERS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Credentials": true,
 };
 
-module.exports.handler = async (event) => {
+module.exports = async (event, _, callback) => {
   const body = JSON.parse(event.body);
-  const html = btoa(body.html);
+  console.log(body.html);
+  const html = atob(body.html);
+  console.log(html);
 
   const browser = await chromium.puppeteer.launch({
     args: chromium.args,
@@ -21,34 +24,32 @@ module.exports.handler = async (event) => {
   });
 
   try {
-    console.info("Opening HTML File");
+    console.info("Opening HTML File...");
     const page = await browser.newPage();
     await page.goto("data:text/html," + html, { waitUntil: "networkidle2" });
     await page.waitFor("*");
 
-    console.info("Printing PDF");
+    console.info("Printing PDF...");
     const buffer = await page.pdf({ format: "A4" });
 
     console.info("Cleanup...");
     await browser.close();
 
-    return {
+    callback(null, {
       statusCode: 200,
-      headers: CorsHeaders,
-      body: JSON.stringify({
-        pdf: buffer,
-        filename: body.filename,
-      }),
-    };
+      headers: { ...DEFAULT_HEADERS, "Content-type": "application/pdf" },
+      body: buffer,
+      isBase64Encoded: true,
+    });
   } catch (e) {
     console.error("Error while rendering PDF: ", e);
     await browser.close();
-    return {
+    callback(null, {
       statusCode: 404,
-      headers: CorsHeaders,
+      headers: { ...DEFAULT_HEADERS, "Content-type": "application/json" },
       body: JSON.stringify({
         message: "Error while rendering pdf",
       }),
-    };
+    });
   }
 };

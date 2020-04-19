@@ -7,11 +7,13 @@
     "start": "sls offline start",
     "deploy": "sls deploy",
     "deploy:function": "sls deploy function -f service",
-    "client": "node ./test-client/index.js"
+    "client": "node src/client/index.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "atob": "^2.1.2",
+    "btoa": "^1.2.1",
     "chrome-aws-lambda": "^2.1.1",
     "node-fetch": "^2.6.0",
     "puppeteer-core": "^3.0.0"
