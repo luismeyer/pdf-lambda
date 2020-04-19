@@ -19,6 +19,7 @@ fetch(LAMBDA_ENDPOINT, {
     filename: "test.pdf",
   }),
 })
+  .catch((err) => console.error("Error while fetching lambda:", err))
   .then((response) => response.json())
   .then((response) => {
     console.info("Saving Pdf File...");
@@ -27,4 +28,5 @@ fetch(LAMBDA_ENDPOINT, {
       path.join(__dirname, response.filename),
       Buffer.from(response.pdf)
     );
-  });
+  })
+  .catch((err) => console.error("Error while saving pdf file:", err));

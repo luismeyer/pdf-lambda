@@ -1,7 +1,7 @@
 "use strict";
 const launchChrome = require("@serverless-chrome/lambda");
-const request = require("superagent");
-const puppeteer = require("puppeteer");
+const fetch = require("node-fetch");
+const puppeteer = require("puppeteer-core");
 
 const btoa = (b) => Buffer.from(b, "base64").toString();
 const CorsHeaders = {
@@ -14,11 +14,9 @@ const getChrome = async () => {
     flags: ["--headless"],
   });
 
-  const response = await request
-    .get(`${chrome.url}/json/version`)
-    .set("Content-Type", "application/json");
-
-  return response.body.webSocketDebuggerUrl;
+  return await fetch(`${chrome.url}/json/version`).then((res) =>
+    res.json().then((body) => body.webSocketDebuggerUrl)
+  );
 };
 
 module.exports.handler = async (event) => {

@@ -1,4 +1,4 @@
-name: Deploy Version
+name: Deploy Master
 
 on:
   push:
@@ -14,9 +14,12 @@ jobs:
       - uses: actions/checkout@master
 
       - name: Install
-        run: npm install --only=prod
+        run: npm install
 
-      - name: serverless deploy
+      - name: Build
+        run: npm run build
+
+      - name: Serverless deploy
         uses: serverless/github-action@master
         with:
           args: deploy --stage prod

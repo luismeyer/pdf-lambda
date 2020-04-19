@@ -3,10 +3,15 @@ service: pdf
 plugins:
   - serverless-offline
   - serverless-dotenv-plugin
+  - serverless-webpack
 
 custom:
   serverless-offline:
     port: 3000
+  webpack:
+    webpackConfig: "./webpack.config.js"
+    includeModules: true
+    packager: "npm"
 
 package:
   exclude:
@@ -23,7 +28,7 @@ provider:
 
 functions:
   service:
-    handler: handler.handler
+    handler: index.handler
     events:
       - http:
           path: /pdf
