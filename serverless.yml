@@ -23,7 +23,7 @@ package:
 provider:
   name: aws
   runtime: nodejs12.x
-  stage: dev
+  stage: ${opt:stage, 'dev'}
   region: "eu-central-1"
   environment:
     STAGE: ${self:provider.stage}
