@@ -1,7 +1,7 @@
 "use strict";
-const launchChrome = require("@serverless-chrome/lambda");
-const fetch = require("node-fetch");
-const puppeteer = require("puppeteer-core");
+const chromium = require("chrome-aws-lambda");
+
+const chromePath = process.env.CHROME_PATH;
 
 const btoa = (b) => Buffer.from(b, "base64").toString();
 const CorsHeaders = {
@@ -9,23 +9,15 @@ const CorsHeaders = {
   "Access-Control-Allow-Credentials": true,
 };
 
-const getChrome = async () => {
-  const chrome = await launchChrome({
-    flags: ["--headless"],
-  });
-
-  return await fetch(`${chrome.url}/json/version`).then((res) =>
-    res.json().then((body) => body.webSocketDebuggerUrl)
-  );
-};
-
 module.exports.handler = async (event) => {
   const body = JSON.parse(event.body);
   const html = btoa(body.html);
 
-  const endpoint = await getChrome();
-  const browser = await puppeteer.connect({
-    browserWSEndpoint: endpoint,
+  const browser = await chromium.puppeteer.launch({
+    args: chromium.args,
+    defaultViewport: chromium.defaultViewport,
+    executablePath: chromePath || (await chromium.executablePath),
+    headless: chromium.headless,
   });
 
   try {
