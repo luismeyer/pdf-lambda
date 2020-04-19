@@ -1,0 +1,36 @@
+name: Deploy PR to dev stage
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  client:
+    if: github.event.comment.body == '@github-actions deploy'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@master
+
+      - name: Install
+        run: npm install
+
+      - name: Serverless deploy
+        uses: serverless/github-action@master
+        with:
+          args: deploy --stage dev
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Add deployed Comment
+        uses: actions/github-script@0.9.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: "Deployed to https://staging.luimey.de"
+            });

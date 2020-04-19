@@ -19,7 +19,6 @@ module.exports = (event, _, callback) => {
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
                 html: btoa(evt.target.result),
-                filename: "test.pdf",
               }),
             })
               .then(response => response.arrayBuffer())

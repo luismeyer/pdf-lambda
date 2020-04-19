@@ -11,10 +11,7 @@ const DEFAULT_HEADERS = {
 
 module.exports = async (event, _, callback) => {
   const body = JSON.parse(event.body);
-  console.log(body.html);
-
   const html = atob(body.html);
-  console.log(html);
 
   const browser = await chromium.puppeteer.launch({
     args: chromium.args,

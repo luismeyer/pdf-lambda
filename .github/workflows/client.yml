@@ -1,0 +1,21 @@
+name: Run Testclient
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  client:
+    if: github.event.comment.body == '@github-actions client'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@master
+
+      - name: Install
+        run: npm install
+
+      - name: Test client
+        run: npm run client
+        env:
+          LAMBDA_ENDPOINT: "https://prod.luimey.de/pdf"
