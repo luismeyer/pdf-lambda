@@ -1,6 +1,7 @@
 .env
 node_modules/
 .serverless
+.webpack
 
 # Test Client Files
 test.*
