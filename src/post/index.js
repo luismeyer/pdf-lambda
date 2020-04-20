@@ -11,6 +11,7 @@ const DEFAULT_HEADERS = {
 };
 
 module.exports = async (event, _, callback) => {
+  console.log(event);
   const body = JSON.parse(event.body);
   const html = atob(body.html);
 
