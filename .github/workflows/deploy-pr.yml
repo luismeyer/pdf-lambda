@@ -16,13 +16,12 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const { data } = github.pulls.get({
+            const { data } = await github.pulls.get({
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: context.issue.number,
             });
-
-            core.setOutput('sha', data.head.sha);
+            core.setOutput('sha', `${data.head.sha}`);
 
       - uses: actions/checkout@v2
         with:
