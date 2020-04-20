@@ -9,7 +9,7 @@ plugins:
 custom:
   domains:
     prod: pdf.luimey.de
-    dev: staging.pdf.luimey.de
+    dev: dev-pdf.luimey.de
   serverless-offline:
     port: 3000
   webpack:
