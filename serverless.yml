@@ -4,6 +4,7 @@ plugins:
   - serverless-offline
   - serverless-dotenv-plugin
   - serverless-webpack
+  - serverless-domain-manager
 
 custom:
   serverless-offline:
@@ -12,6 +13,11 @@ custom:
     webpackConfig: "./webpack.config.js"
     includeModules: true
     packager: "npm"
+  customDomain:
+    domainName: pdf.luimey.de
+    createRoute53Record: true
+    endpointType: "regional"
+    securityPolicy: tls_1_2
 
 package:
   exclude:

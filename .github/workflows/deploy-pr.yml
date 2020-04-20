@@ -10,7 +10,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@master
+      - name: Fetch HEAD SHA
+        id: fetch-head
+        uses: actions/github-script@0.9.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data } = github.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+            });
+
+            core.setOutput('sha', data.head.sha);
+
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ steps.fetch-head.outputs.sha }}
 
       - name: Install
         run: npm install
@@ -32,5 +48,5 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: "Deployed to https://staging.luimey.de"
+              body: "Deployed to https://staging.pdf.luimey.de"
             });
