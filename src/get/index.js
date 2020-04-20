@@ -14,12 +14,10 @@ module.exports = (event, _, callback) => {
         inputElement.addEventListener("change", function () {
           const reader = new FileReader();
           reader.onload = function (evt) {
-              fetch("/${STAGE}/pdf", {
+            fetch("/${STAGE}/pdf", {
               method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                html: btoa(evt.target.result),
-              }),
+              headers: { "Content-Type": "application/text" },
+              body: btoa(evt.target.result),
             })
               .then(response => response.json())
               .then(response => {

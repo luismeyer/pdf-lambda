@@ -21,10 +21,9 @@ console.info("Sending Htmlfile to Lambda Endpoint...");
 
 fetch(LAMBDA_ENDPOINT, {
   method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    html: btoa(html),
-  }),
+  headers: { "Content-Type": "application/text" },
+  body: btoa(html),
+  isBase64Encoded: true,
 })
   .then((res) => res.json())
   .then((res) => {

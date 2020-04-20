@@ -10,9 +10,7 @@ const DEFAULT_HEADERS = {
   "Access-Control-Allow-Credentials": true,
 };
 
-module.exports = async (event, _, callback) => {
-  console.log(event);
-  const body = JSON.parse(event.body);
+module.exports = async ({ body }, _, callback) => {
   const html = atob(body.html);
 
   const browser = await chromium.puppeteer.launch({
