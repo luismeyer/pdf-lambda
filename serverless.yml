@@ -7,6 +7,9 @@ plugins:
   - serverless-domain-manager
 
 custom:
+  domains:
+    prod: pdf.luimey.de
+    dev: staging.pdf.luimey.de
   serverless-offline:
     port: 3000
   webpack:
@@ -14,10 +17,9 @@ custom:
     includeModules: true
     packager: "npm"
   customDomain:
-    domainName: pdf.luimey.de
+    domainName: ${self:custom.domains.${self:provider.stage}}
     createRoute53Record: true
-    endpointType: "regional"
-    securityPolicy: tls_1_2
+    stage: ${self:provider.stage}
 
 package:
   exclude:
