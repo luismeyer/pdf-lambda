@@ -5,7 +5,6 @@
   "main": "index.js",
   "scripts": {
     "start": "sls offline start",
-    "deploy": "sls deploy",
     "client": "node src/scripts/client/index.js"
   },
   "author": "",

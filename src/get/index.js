@@ -1,5 +1,7 @@
-const { STAGE } = process.env;
+const { STAGE, IS_OFFLINE } = process.env;
 if (!STAGE) throw Error("Missing Environment Variable: STAGE");
+
+const basePath = IS_OFFLINE ? `/${STAGE}` : "";
 
 module.exports = (event, _, callback) => {
   const html = `
@@ -14,10 +16,12 @@ module.exports = (event, _, callback) => {
         inputElement.addEventListener("change", function () {
           const reader = new FileReader();
           reader.onload = function (evt) {
-            fetch("/${STAGE}/pdf", {
+            fetch("${basePath}/", {
               method: "POST",
-              headers: { "Content-Type": "application/text" },
-              body: btoa(evt.target.result),
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                html: btoa(evt.target.result),
+              }),
             })
               .then(response => response.json())
               .then(response => {
@@ -25,7 +29,8 @@ module.exports = (event, _, callback) => {
                 a.href = \`data:application/pdf;base64,\${response.data}\`;
                 a.download = "test.pdf";
                 a.click();
-                this.value = "";
+                const inputElement = document.getElementById("input");
+                inputElement.value= "";
               });
           };
 

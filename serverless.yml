@@ -37,21 +37,19 @@ provider:
   apiGateway:
     binaryMediaTypes:
       - "*/*"
-  logs:
-    restApi: true
 
 functions:
   post:
     handler: src/handlers.post
     events:
       - http:
-          path: /pdf
+          path: /
           method: POST
           cors: true
   get:
     handler: src/handlers.get
     events:
       - http:
-          path: /pdf
+          path: /
           method: GET
           cors: true

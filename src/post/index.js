@@ -3,6 +3,7 @@ const chromium = require("chrome-aws-lambda");
 const atob = require("atob");
 const btoa = require("btoa");
 
+const { IS_OFFLINE } = process.env;
 const chromePath = process.env.CHROME_PATH;
 
 const DEFAULT_HEADERS = {
@@ -11,7 +12,8 @@ const DEFAULT_HEADERS = {
 };
 
 module.exports = async ({ body }, _, callback) => {
-  const html = atob(body.html);
+  const parsedBody = JSON.parse(IS_OFFLINE ? body : atob(body));
+  const html = atob(parsedBody.html);
 
   const browser = await chromium.puppeteer.launch({
     args: chromium.args,

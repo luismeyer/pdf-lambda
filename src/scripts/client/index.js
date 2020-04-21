@@ -27,6 +27,7 @@ fetch(LAMBDA_ENDPOINT, {
 })
   .then((res) => res.json())
   .then((res) => {
+    console.log(res);
     console.log("Saving PDf");
     console.log(atob(res.data));
     fs.writeFileSync("test.pdf", atob(res.data));
