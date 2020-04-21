@@ -8,8 +8,7 @@ Send a Post Request to the Lambda using a body like this:
 
 ```javascript
 {
-    html: "<html string>",
-    filename: "<file.pdf>"
+    html: "<b64 encoded html string>",
 }
 ```
 
