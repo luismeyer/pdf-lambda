@@ -13,7 +13,7 @@
     "atob": "^2.1.2",
     "btoa": "^1.2.1",
     "chrome-aws-lambda": "^2.1.1",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.1",
     "puppeteer-core": "^3.0.0"
   },
   "devDependencies": {
