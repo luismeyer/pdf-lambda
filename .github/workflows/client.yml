@@ -18,4 +18,4 @@ jobs:
       - name: Test client
         run: npm run client
         env:
-          LAMBDA_ENDPOINT: "https://prod.luimey.de/pdf"
+          LAMBDA_ENDPOINT: " https://dev-pdf.luimey.de"

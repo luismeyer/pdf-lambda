@@ -4,7 +4,6 @@ const atob = require("atob");
 const btoa = require("btoa");
 
 const { IS_OFFLINE } = process.env;
-const chromePath = process.env.CHROME_PATH;
 
 const DEFAULT_HEADERS = {
   "Access-Control-Allow-Origin": "*",
@@ -18,7 +17,7 @@ module.exports = async ({ body }, _, callback) => {
   const browser = await chromium.puppeteer.launch({
     args: chromium.args,
     defaultViewport: chromium.defaultViewport,
-    executablePath: chromePath || (await chromium.executablePath),
+    executablePath: await chromium.executablePath,
     headless: chromium.headless,
   });
 
