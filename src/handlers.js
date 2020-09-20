@@ -1,2 +1,2 @@
-module.exports.post = require("./post");
-module.exports.get = require("./get");
+module.exports.post = require("./api");
+module.exports.get = require("./frontend");

@@ -1,7 +1,8 @@
 "use strict";
-const chromium = require("chrome-aws-lambda");
+const awsChromium = require("chrome-aws-lambda");
 const atob = require("atob");
 const btoa = require("btoa");
+const chromium = require("chromium");
 
 const { IS_OFFLINE } = process.env;
 
@@ -10,22 +11,36 @@ const DEFAULT_HEADERS = {
   "Access-Control-Allow-Credentials": true,
 };
 
-module.exports = async ({ body }, _, callback) => {
+const installChromium = () => {
+  if (chromium.path) return;
+
+  console.info("Installing chrome...");
+  return chromium.install();
+};
+
+module.exports = async ({ body }) => {
   const parsedBody = JSON.parse(IS_OFFLINE ? body : atob(body));
   const html = atob(parsedBody.html);
 
-  const browser = await chromium.puppeteer.launch({
-    args: chromium.args,
-    defaultViewport: chromium.defaultViewport,
-    executablePath: await chromium.executablePath,
-    headless: chromium.headless,
+  if (IS_OFFLINE) {
+    await installChromium();
+  }
+
+  const executablePath = IS_OFFLINE
+    ? chromium.path
+    : await awsChromium.executablePath;
+
+  const browser = await awsChromium.puppeteer.launch({
+    args: awsChromium.args,
+    defaultViewport: awsChromium.defaultViewport,
+    executablePath,
+    headless: awsChromium.headless,
   });
 
   try {
     console.info("Opening HTML File...");
     const page = await browser.newPage();
     await page.goto(`data:text/html,${html}`, { waitUntil: "networkidle2" });
-    await page.waitFor("*");
 
     console.info("Printing PDF...");
     const buffer = await page.pdf({ format: "A4" });
@@ -33,22 +48,23 @@ module.exports = async ({ body }, _, callback) => {
     console.info("Cleanup...");
     await browser.close();
 
-    callback(null, {
+    return {
       statusCode: 200,
       headers: { ...DEFAULT_HEADERS, "Content-type": "application/json" },
       body: JSON.stringify({
         data: btoa(buffer),
       }),
-    });
+    };
   } catch (e) {
     console.error("Error while rendering PDF: ", e);
     await browser.close();
-    callback(null, {
+
+    return {
       statusCode: 400,
       headers: { ...DEFAULT_HEADERS, "Content-type": "application/json" },
       body: JSON.stringify({
         message: "Error while rendering pdf",
       }),
-    });
+    };
   }
 };
