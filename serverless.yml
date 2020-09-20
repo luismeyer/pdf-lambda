@@ -3,7 +3,6 @@ service: pdf
 plugins:
   - serverless-offline
   - serverless-dotenv-plugin
-  - serverless-webpack
   - serverless-domain-manager
 
 custom:
@@ -12,10 +11,6 @@ custom:
     dev: dev-pdf.luimey.de
   serverless-offline:
     port: 3000
-  webpack:
-    webpackConfig: "./webpack.config.js"
-    includeModules: true
-    packager: "npm"
   customDomain:
     domainName: ${self:custom.domains.${self:provider.stage}}
     createRoute53Record: true
@@ -25,7 +20,8 @@ package:
   exclude:
     - ./**
   include:
-    - .webpack
+    - ./node_modules/**
+    - ./src/**
 
 provider:
   name: aws

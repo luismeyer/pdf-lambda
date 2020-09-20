@@ -10,8 +10,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Fetch HEAD SHA
-        id: fetch-head
+      - name: Setup
+        id: setup
         uses: actions/github-script@0.9.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -21,11 +21,20 @@ jobs:
               repo: context.repo.repo,
               pull_number: context.issue.number,
             });
+
+            const { id } = await github.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: "Starting deployment..."
+            });
+
+            core.setOutput('comment_id', id);
             core.setOutput('sha', `${data.head.sha}`);
 
       - uses: actions/checkout@v2
         with:
-          ref: ${{ steps.fetch-head.outputs.sha }}
+          ref: ${{ steps.setup.outputs.sha }}
 
       - name: Install
         run: npm install
@@ -51,9 +60,9 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            github.issues.createComment({
+            await github.issues.updateComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: context.issue.number,
-              body: "Deployed to https://dev-pdf.luimey.de"
+              comment_id: ${{ steps.setup.outputs.sha }},
+              body: "Deployed to https://dev-pdf.luimey.de",
             });

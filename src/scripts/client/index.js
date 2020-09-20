@@ -1,8 +1,8 @@
 const fetch = require("node-fetch");
 const fs = require("fs");
 const path = require("path");
-const btoa = require("btoa");
-const atob = require("atob");
+
+const { btoa, atob } = require("../../utils");
 
 require("dotenv").config();
 
@@ -21,14 +21,15 @@ console.info("Sending Htmlfile to Lambda Endpoint...");
 
 fetch(LAMBDA_ENDPOINT, {
   method: "POST",
-  headers: { "Content-Type": "application/text" },
-  body: btoa(html),
-  isBase64Encoded: true,
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ html: btoa(html) }),
 })
   .then((res) => res.json())
   .then((res) => {
-    console.log(res);
-    console.log("Saving PDf");
-    console.log(atob(res.data));
+    if (res.error || !res.data) {
+      throw Error(`ERROR: ${res.error || "missing data"}`);
+    }
+
+    console.log("Saving PDf...");
     fs.writeFileSync("test.pdf", atob(res.data));
   });

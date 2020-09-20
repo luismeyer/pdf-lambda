@@ -1,8 +1,8 @@
 "use strict";
 const awsChromium = require("chrome-aws-lambda");
-const atob = require("atob");
-const btoa = require("btoa");
 const chromium = require("chromium");
+
+const { atob, btoa } = require("../utils");
 
 const { IS_OFFLINE } = process.env;
 

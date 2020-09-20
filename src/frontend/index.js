@@ -6,6 +6,8 @@ if (!STAGE) throw Error("Missing Environment Variable: STAGE");
 const basePath = IS_OFFLINE ? `/${STAGE}` : "";
 
 module.exports = (event, _, callback) => {
+  console.info("Incoming: ", event);
+
   const html = `
   <html>
     <head>

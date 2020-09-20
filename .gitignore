@@ -5,3 +5,4 @@ node_modules/
 
 # Test Client Files
 test.pdf
+.DS_Store
