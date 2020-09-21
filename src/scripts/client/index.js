@@ -30,6 +30,5 @@ fetch(LAMBDA_ENDPOINT, {
       throw Error(`ERROR: ${res.error || "missing data"}`);
     }
 
-    console.log("Saving PDf...");
-    fs.writeFileSync("test.pdf", atob(res.data));
+    fs.writeFileSync("test.pdf", Buffer.from(res.data, "base64"));
   });

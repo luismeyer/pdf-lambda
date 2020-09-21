@@ -10,6 +10,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Setup
+        id: setup
+        uses: actions/github-script@0.9.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const checkResponse = await github.checks.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              name: "Run Testclient",
+              head_sha: context.sha,
+              status: "in_progress"
+            });
+
+            core.setOutput('check_id', checkResponse.data.id);
+
       - uses: actions/checkout@master
 
       - name: Install
@@ -19,3 +35,24 @@ jobs:
         run: npm run client
         env:
           LAMBDA_ENDPOINT: " https://dev-pdf.luimey.de"
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: pdf-output
+          path: test.pdf
+
+      - name: Clean Up
+        uses: actions/github-script@0.9.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const status = `${{ job.status }}`;
+            const conclusion = status == 'success' || status == 'cancelled' ? status : 'failure';
+
+            github.checks.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              check_run_id: `${{ steps.check.outputs.check_id }}`,
+              status: "completed",
+              conclusion,
+            });

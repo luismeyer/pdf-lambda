@@ -16,21 +16,30 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const { data } = await github.pulls.get({
+            const pullResponse = await github.pulls.get({
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: context.issue.number,
             });
 
-            const { id } = await github.issues.createComment({
+            const commentResponse = await github.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
               body: "Starting deployment..."
             });
 
-            core.setOutput('comment_id', id);
-            core.setOutput('sha', `${data.head.sha}`);
+            const checkResponse = await github.checks.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              name: "Deploy Master",
+              head_sha: context.sha,
+              status: "in_progress"
+            });
+
+            core.setOutput('check_id', checkResponse.data.id);
+            core.setOutput('comment_id', commentResponse.id);
+            core.setOutput('sha', pullResponse.data.head.sha);
 
       - uses: actions/checkout@v2
         with:
@@ -55,7 +64,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      - name: Add deployed Comment
+      - name: Clean Up
         uses: actions/github-script@0.9.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -63,6 +72,17 @@ jobs:
             await github.issues.updateComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              comment_id: ${{ steps.setup.outputs.sha }},
+              comment_id: "${{ steps.setup.outputs.sha }}",
               body: "Deployed to https://dev-pdf.luimey.de",
+            });
+
+            const status = "${{ job.status }}";
+            const conclusion = status == 'success' || status == 'cancelled' ? status : 'failure';
+
+            github.checks.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              check_run_id: "${{ steps.setup.outputs.check_id }}",
+              status: "completed",
+              conclusion,
             });
