@@ -1,4 +1,4 @@
-# Pdf Lambda
+# Pdf λ 📄
 
 AWS Lambda that converts Html to Pdf
 
@@ -12,24 +12,24 @@ Send a Post Request to the Lambda using a body like this:
 }
 ```
 
-The function will return a json containing the pdf as a buffer and the filename for further usage of the file.
+The function will return a json containing the pdf as a b64.
 
-## Commands
+```javascript
+{
+    data: "<b64 encoded pdf file>",
+}
+```
 
-Start local Development:
-(If you aren't on Mac or if you don't have Chrome installed in the default directory put your Chromepath into the serverless.yml file)
+## Get Started
+
+To start local Development:
 
 ```bash
+npm i
 npm start
 ```
 
-Deploy the Function to your AWS Account:
-
-```bash
-npm run deploy
-```
-
-Client Example:
+Send an example request to the lambda endpoint:
 
 ```bash
 npm run client
