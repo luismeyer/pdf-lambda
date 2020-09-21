@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "sls offline start",
-    "client": "node src/scripts/client/index.js"
+    "client": "node src/scripts/client/index.js",
+    "setup": "node src/scripts/setup.js"
   },
   "author": "",
   "license": "ISC",

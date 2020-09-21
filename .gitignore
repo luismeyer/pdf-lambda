@@ -4,5 +4,7 @@ node_modules/
 .webpack
 
 # Test Client Files
-test.pdf
-.DS_Store
+**/test.pdf
+**/.DS_Store
+
+**/version

@@ -2,7 +2,6 @@ service: pdf
 
 plugins:
   - serverless-offline
-  - serverless-dotenv-plugin
   - serverless-domain-manager
 
 custom:

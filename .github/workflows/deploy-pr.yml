@@ -21,12 +21,13 @@ jobs:
               repo: context.repo.repo,
               pull_number: context.issue.number,
             });
+            const headSha = pullResponse.data.head.sha
 
             const checkResponse = await github.checks.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
               name: "Deploy PR to dev stage",
-              head_sha: `${pullResponse.data.head.sha}`,
+              head_sha: headSha,
               status: "in_progress",
               output: {
                 title: "Deploy PR status",
@@ -35,7 +36,7 @@ jobs:
             });
 
             core.setOutput('check_id', `${checkResponse.data.id}`);
-            core.setOutput('sha', `${pullResponse.data.head.sha}`);
+            core.setOutput('sha', `${headSha}`);
 
       - uses: actions/checkout@v2
         with:
@@ -43,6 +44,11 @@ jobs:
 
       - name: Install
         run: npm install
+
+      - name: Setup
+        run: npm run setup
+        env:
+          GITHUB_SHA: ${{ steps.setup.outputs.sha }}
 
       - name: Serverless create domain
         uses: serverless/github-action@master

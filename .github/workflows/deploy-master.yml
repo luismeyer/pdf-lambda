@@ -15,6 +15,9 @@ jobs:
       - name: Install
         run: npm install
 
+      - name: Setup
+        run: npm run setup
+
       - name: Serverless create domain
         uses: serverless/github-action@master
         with:

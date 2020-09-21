@@ -1,6 +1,7 @@
 const Handlebars = require("handlebars");
 const path = require("path");
 const fs = require("fs");
+const { version } = require("../utils");
 
 const { STAGE, IS_OFFLINE } = process.env;
 if (!STAGE) throw Error("Missing Environment Variable: STAGE");
@@ -17,6 +18,7 @@ module.exports = (event, _, callback) => {
   const template = Handlebars.compile(htmlSource);
   const result = template({
     basePath,
+    version: version(),
   });
 
   callback(null, {
