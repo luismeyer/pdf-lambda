@@ -16,15 +16,21 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
+            const pullResponse = await github.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+            });
+
             const checkResponse = await github.checks.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
               name: "Run Testclient",
-              head_sha: context.sha,
+              head_sha: `${pullResponse.data.head.sha}`,
               status: "in_progress"
             });
 
-            core.setOutput('check_id', checkResponse.data.id);
+            core.setOutput('check_id', `${checkResponse.data.id}`);
 
       - uses: actions/checkout@master
 
@@ -52,7 +58,11 @@ jobs:
             github.checks.update({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              check_run_id: `${{ steps.check.outputs.check_id }}`,
+              check_run_id: `${{ steps.setup.outputs.check_id }}`,
               status: "completed",
               conclusion,
+              output: {
+                title: "Test Client",
+                summary: "Successfully ran test-client"
+              } 
             });

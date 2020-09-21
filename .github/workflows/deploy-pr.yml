@@ -22,24 +22,20 @@ jobs:
               pull_number: context.issue.number,
             });
 
-            const commentResponse = await github.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              body: "Starting deployment..."
-            });
-
             const checkResponse = await github.checks.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              name: "Deploy Master",
-              head_sha: context.sha,
-              status: "in_progress"
+              name: "Deploy PR to dev stage",
+              head_sha: `${pullResponse.data.head.sha}`,
+              status: "in_progress",
+              output: {
+                title: "Deploy PR status",
+                summary: "Starting deployment..."
+              }
             });
 
-            core.setOutput('check_id', checkResponse.data.id);
-            core.setOutput('comment_id', commentResponse.id);
-            core.setOutput('sha', pullResponse.data.head.sha);
+            core.setOutput('check_id', `${checkResponse.data.id}`);
+            core.setOutput('sha', `${pullResponse.data.head.sha}`);
 
       - uses: actions/checkout@v2
         with:
@@ -69,20 +65,17 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            await github.issues.updateComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              comment_id: "${{ steps.setup.outputs.sha }}",
-              body: "Deployed to https://dev-pdf.luimey.de",
-            });
-
             const status = "${{ job.status }}";
             const conclusion = status == 'success' || status == 'cancelled' ? status : 'failure';
 
-            github.checks.update({
+            await github.checks.update({
               owner: context.repo.owner,
               repo: context.repo.repo,
               check_run_id: "${{ steps.setup.outputs.check_id }}",
               status: "completed",
               conclusion,
+              output: {
+                title: "Deploy PR status",
+                summary: "Deployed to https://dev-pdf.luimey.de"
+              }
             });
