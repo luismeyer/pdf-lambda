@@ -2,6 +2,10 @@ const fs = require("fs");
 
 const { VERSION_FILE } = require("../utils");
 
-const { GITHUB_SHA } = process.env;
+const { GITHUB_SHA, SHA } = process.env;
 
-fs.writeFileSync(VERSION_FILE, GITHUB_SHA ? GITHUB_SHA.slice(0, 8) : "");
+const versionSha = SHA || GITHUB_SHA;
+const version = versionSha ? versionSha.slice(0, 8) : "";
+fs.writeFileSync(VERSION_FILE, version);
+
+console.info("Set version to: ", version);
